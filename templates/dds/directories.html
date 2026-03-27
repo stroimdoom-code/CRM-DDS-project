@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Справочники{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <h1 class="h2 mb-5 text-center">
+        <i class="fas fa-book me-3"></i>
+        Справочники
+    </h1>
+    
+    <div class="row g-4">
+        <!-- Статусы -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card-modern h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-tag fa-lg text-primary"></i>
+                            </div>
+                            <h5 class="card-title mb-0 fw-bold">Статусы</h5>
+                        </div>
+                        <button class="btn btn-sm btn-gradient" onclick="openCreateStatus()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="status-list" class="status-list">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Типы операций -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card-modern h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-exchange-alt fa-lg text-success"></i>
+                            </div>
+                            <h5 class="card-title mb-0 fw-bold">Типы операций</h5>
+                        </div>
+                        <button class="btn btn-sm btn-gradient" onclick="openCreateTransactionType()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="transactiontype-list" class="transactiontype-list">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Категории -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card-modern h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-folder fa-lg text-info"></i>
+                            </div>
+                            <h5 class="card-title mb-0 fw-bold">Категории</h5>
+                        </div>
+                        <button class="btn btn-sm btn-gradient" onclick="openCreateCategory()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="category-list" class="category-list">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Подкатегории -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card-modern h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-circle bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-folder-open fa-lg text-warning"></i>
+                            </div>
+                            <h5 class="card-title mb-0 fw-bold">Подкатегории</h5>
+                        </div>
+                        <button class="btn btn-sm btn-gradient" onclick="openCreateSubcategory()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="subcategory-list" class="subcategory-list">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== STATUS MODAL ==================== -->
+<div class="modal fade" id="statusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel">Статус</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="status-id">
+                <div class="mb-3">
+                    <label class="form-label">Название <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="status-name" placeholder="Введите название" maxlength="50">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-gradient" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-gradient" onclick="saveStatus()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TRANSACTION TYPE MODAL ==================== -->
+<div class="modal fade" id="transactiontypeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transactiontypeModalLabel">Тип операции</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="transactiontype-id">
+                <div class="mb-3">
+                    <label class="form-label">Название <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="transactiontype-name" placeholder="Введите название" maxlength="50">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Тип операции <span class="text-danger">*</span></label>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="transactiontype-color" id="color-income" value="income">
+                            <label class="btn btn-outline-success w-100 py-3" for="color-income">
+                                <i class="fas fa-arrow-up me-1"></i>
+                                <div class="mt-1 small">Пополнение</div>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="transactiontype-color" id="color-expense" value="expense" checked>
+                            <label class="btn btn-outline-danger w-100 py-3" for="color-expense">
+                                <i class="fas fa-arrow-down me-1"></i>
+                                <div class="mt-1 small">Списание</div>
+                            </label>
+                        </div>
+                        <div class="col-4">
+                            <input type="radio" class="btn-check" name="transactiontype-color" id="color-other" value="other">
+                            <label class="btn btn-outline-secondary w-100 py-3" for="color-other">
+                                <i class="fas fa-circle me-1"></i>
+                                <div class="mt-1 small">Другое</div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-text">Выберите тип для цветовой маркировки</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-gradient" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-gradient" onclick="saveTransactionType()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== CATEGORY MODAL ==================== -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoryModalLabel">Категория</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="category-id">
+                <div class="mb-3">
+                    <label class="form-label">Название <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="category-name" placeholder="Введите название" maxlength="100">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Тип операции <span class="text-danger">*</span></label>
+                    <select class="form-select" id="category-transaction-type">
+                        <option value="">Выберите тип</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-gradient" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-gradient" onclick="saveCategory()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SUBCATEGORY MODAL ==================== -->
+<div class="modal fade" id="subcategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="subcategoryModalLabel">Подкатегория</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="subcategory-id">
+                <div class="mb-3">
+                    <label class="form-label">Название <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="subcategory-name" placeholder="Введите название" maxlength="100">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Категория <span class="text-danger">*</span></label>
+                    <select class="form-select" id="subcategory-category">
+                        <option value="">Выберите категорию</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-gradient" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-gradient" onclick="saveSubcategory()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'dds/js/directories.js' %}"></script>
+{% endblock %}

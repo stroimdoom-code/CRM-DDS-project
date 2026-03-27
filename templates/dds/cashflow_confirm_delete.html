@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Удаление записи{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card-modern text-center py-5">
+                <i class="fas fa-exclamation-triangle fa-4x text-danger mb-3"></i>
+                <h3 class="mb-3">Подтверждение удаления</h3>
+                <p class="text-muted mb-4">
+                    Вы уверены, что хотите удалить эту запись?
+                </p>
+                
+                <div class="card-modern bg-light p-3 mb-4 text-start">
+                    <p class="mb-1"><strong>Дата:</strong> {{ object.date|date:"d.m.Y" }}</p>
+                    <p class="mb-1"><strong>Статус:</strong> {{ object.status.name }}</p>
+                    <p class="mb-1"><strong>Тип:</strong> {{ object.transaction_type.name }}</p>
+                    <p class="mb-1"><strong>Категория:</strong> {{ object.category.name }}</p>
+                    <p class="mb-1"><strong>Сумма:</strong> 
+                        <span class="{% if object.transaction_type.name == 'Пополнение' %}text-success{% else %}text-danger{% endif %}">
+                            {{ object.amount|floatformat:2 }} ₽
+                        </span>
+                    </p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-gradient bg-danger border-0">
+                        <i class="fas fa-trash me-2"></i>Удалить
+                    </button>
+                    <a href="{% url 'cashflow_list' %}" class="btn-outline-gradient ms-2">
+                        <i class="fas fa-times me-2"></i>Отмена
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

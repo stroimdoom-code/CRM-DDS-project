@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Редактирование{% else %}Создание{% endif %} записи{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-modern">
+                <h3 class="mb-4 text-center">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    {% if form.instance.pk %}Редактирование{% else %}Создание{% endif %} записи
+                </h3>
+                
+                <form method="post" id="cashflow-form" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row g-4">
+                        <!-- Дата -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="far fa-calendar me-1"></i>Дата операции <span class="text-danger">*</span>
+                            </label>
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                                <div class="text-danger small mt-1">{{ form.date.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Статус -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-tag me-1"></i>Статус <span class="text-danger">*</span>
+                            </label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small mt-1">{{ form.status.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Тип операции -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-exchange-alt me-1"></i>Тип операции <span class="text-danger">*</span>
+                            </label>
+                            {{ form.transaction_type }}
+                            {% if form.transaction_type.errors %}
+                                <div class="text-danger small mt-1">{{ form.transaction_type.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Категория -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-folder me-1"></i>Категория <span class="text-danger">*</span>
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Сначала выберите тип операции</div>
+                        </div>
+
+                        <!-- Подкатегория -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-folder-open me-1"></i>Подкатегория <span class="text-danger">*</span>
+                            </label>
+                            {{ form.subcategory }}
+                            {% if form.subcategory.errors %}
+                                <div class="text-danger small mt-1">{{ form.subcategory.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Сначала выберите категорию</div>
+                        </div>
+                        
+                        <!-- Сумма -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-ruble-sign me-1"></i>Сумма (₽) <span class="text-danger">*</span>
+                            </label>
+                            {{ form.amount }}
+                            <div class="form-text">Сумма в рублях (положительное число)</div>
+                            {% if form.amount.errors %}
+                                <div class="text-danger small mt-1">{{ form.amount.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Комментарий -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-comment me-1"></i>Комментарий
+                            </label>
+                            {{ form.comment }}
+                            {% if form.comment.errors %}
+                                <div class="text-danger small mt-1">{{ form.comment.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Non-field errors -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger mt-3">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Кнопки -->
+                    <div class="d-flex gap-3 mt-5 pt-4 border-top">
+                        <button type="submit" class="btn-gradient">
+                            <i class="fas fa-save me-2"></i>Сохранить
+                        </button>
+                        <a href="{% url 'cashflow_list' %}" class="btn-outline-gradient">
+                            <i class="fas fa-times me-2"></i>Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Client-side валидация
+document.getElementById('cashflow-form').addEventListener('submit', function(e) {
+    let isValid = true;
+    const form = e.target;
+    
+    // Проверка обязательных полей
+    const requiredFields = ['id_date', 'id_status', 'id_transaction_type', 'id_category', 'id_subcategory', 'id_amount'];
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field && !field.value) {
+            isValid = false;
+            field.classList.add('is-invalid');
+        } else if (field) {
+            field.classList.remove('is-invalid');
+        }
+    });
+    
+    // Проверка суммы
+    const amountField = document.getElementById('id_amount');
+    if (amountField && amountField.value) {
+        const amount = parseFloat(amountField.value);
+        if (isNaN(amount) || amount <= 0) {
+            isValid = false;
+            amountField.classList.add('is-invalid');
+            showAlert('Сумма должна быть больше 0', 'danger');
+        }
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+        showAlert('Пожалуйста, исправьте ошибки в форме', 'danger');
+        return false;
+    }
+});
+
+// Подсветка полей при вводе
+document.querySelectorAll('#cashflow-form input, #cashflow-form select').forEach(field => {
+    field.addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
+});
+
+// Каскадные фильтры
+const typeSelect = document.getElementById('id_transaction_type');
+const categorySelect = document.getElementById('id_category');
+const subcategorySelect = document.getElementById('id_subcategory');
+
+// Блокируем поля при загрузке
+if (categorySelect) categorySelect.disabled = true;
+if (subcategorySelect) subcategorySelect.disabled = true;
+
+// Функция загрузки категорий для типа
+function loadCategoriesForType(typeId, selectedCategoryId = null) {
+    if (!typeId) {
+        categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
+        categorySelect.disabled = true;
+        subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+        subcategorySelect.disabled = true;
+        return;
+    }
+    
+    fetch(`/api/categories/by_transaction_type/?transaction_type_id=${typeId}`)
+        .then(r => r.json())
+        .then(data => {
+            categorySelect.innerHTML = '<option value="">Выберите категорию</option>' +
+                data.map(c => `<option value="${c.id}" ${c.id == selectedCategoryId ? 'selected' : ''}>${c.name}</option>`).join('');
+            categorySelect.disabled = false;
+            if (selectedCategoryId) {
+                loadSubcategoriesForCategory(selectedCategoryId);
+            }
+        });
+}
+
+// Функция загрузки подкатегорий для категории
+function loadSubcategoriesForCategory(categoryId, selectedSubcategoryId = null) {
+    if (!categoryId) {
+        subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+        subcategorySelect.disabled = true;
+        return;
+    }
+    
+    const currentValue = subcategorySelect.value || selectedSubcategoryId;
+    
+    fetch(`/api/subcategories/by_category/?category_id=${categoryId}`)
+        .then(r => r.json())
+        .then(data => {
+            subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>' +
+                data.map(s => `<option value="${s.id}" ${s.id == currentValue ? 'selected' : ''}>${s.name}</option>`).join('');
+            subcategorySelect.disabled = false;
+        });
+}
+
+// При изменении типа операции - обновляем категории
+if (typeSelect) {
+    typeSelect.addEventListener('change', function() {
+        loadCategoriesForType(this.value);
+    });
+}
+
+// При изменении категории - обновляем подкатегории
+if (categorySelect) {
+    categorySelect.addEventListener('change', function() {
+        loadSubcategoriesForCategory(this.value);
+    });
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    const initialCategoryId = categorySelect ? categorySelect.value : null;
+    const initialSubcategoryId = subcategorySelect ? subcategorySelect.value : null;
+    
+    console.log('Initial values:', {
+        typeId: typeSelect ? typeSelect.value : null,
+        categoryId: initialCategoryId,
+        subcategoryId: initialSubcategoryId
+    });
+    
+    if (typeSelect && typeSelect.value) {
+        loadCategoriesForType(typeSelect.value, initialCategoryId);
+    }
+    
+    if (initialCategoryId && initialSubcategoryId) {
+        loadSubcategoriesForCategory(initialCategoryId, initialSubcategoryId);
+    }
+});
+</script>
+{% endblock %}
