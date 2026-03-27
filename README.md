@@ -276,52 +276,81 @@ coverage html
 
 ```
 crm_dds/
-├── crm_dds/                 # Основной проект Django
+├── crm_dds/                      # Основной проект Django
 │   ├── __init__.py
-│   ├── settings.py          # Настройки проекта
-│   ├── urls.py              # Корневые URL
-│   ├── wsgi.py              # WSGI конфигурация
-│   └── asgi.py              # ASGI конфигурация
-├── dds/                     # Основное приложение
+│   ├── settings.py               # Настройки проекта
+│   ├── urls.py                   # Корневые URL
+│   ├── wsgi.py                   # WSGI конфигурация
+│   └── asgi.py                   # ASGI конфигурация
+│
+├── dds/                          # Основное приложение
 │   ├── __init__.py
-│   ├── models.py            # Модели данных
-│   ├── views.py             # Представления
-│   ├── forms.py             # Формы
-│   ├── urls.py              # URL приложения
-│   ├── admin.py             # Админ-панель
-│   ├── tests/               # Тесты
+│   ├── models.py                 # Модели данных (Status, TransactionType, Category, Subcategory, CashFlow)
+│   ├── views.py                  # Представления (CRUD для CashFlow и справочников)
+│   ├── forms.py                  # Формы Django с валидацией
+│   ├── urls.py                   # URL приложения
+│   ├── admin.py                  # Настройка админ-панели
+│   ├── api_views.py              # DRF ViewSets для API
+│   ├── api_urls.py               # DRF роутер для API
+│   ├── serializers.py            # DRF сериализаторы
+│   ├── apps.py
+│   │
+│   ├── tests/                    # Тесты (89 тестов)
 │   │   ├── __init__.py
-│   │   ├── test_models.py
-│   │   ├── test_views.py
-│   │   ├── test_api.py
-│   │   └── test_crud_views.py
-│   ├── fixtures/            # Фикстуры
+│   │   ├── test_models.py        # Тесты моделей (18 тестов)
+│   │   ├── test_views.py         # Тесты views (27 тестов)
+│   │   ├── test_api.py           # Тесты DRF API (29 тестов)
+│   │   ├── test_integration.py   # Интеграционные тесты (11 тестов)
+│   │   └── test_settings.py      # Тесты настроек (2 теста)
+│   │
+│   ├── fixtures/                 # Фикстуры (начальные данные)
 │   │   ├── initial_status.json
 │   │   ├── initial_transactiontype.json
 │   │   ├── initial_category.json
 │   │   └── initial_subcategory.json
-│   └── migrations/          # Миграции
-├── templates/               # HTML шаблоны
-│   ├── base.html            # Базовый шаблон
-│   └── dds/                 # Шаблоны приложения
-│       ├── cashflow_list.html
-│       ├── cashflow_form.html
-│       ├── cashflow_confirm_delete.html
-│       ├── directories.html
-│       └── [шаблоны справочников]
-├── static/                  # Статические файлы
+│   │
+│   └── migrations/               # Миграции Django
+│
+├── templates/                    # HTML шаблоны
+│   ├── base.html                 # Базовый шаблон (навигация, footer)
+│   └── dds/                      # Шаблоны приложения
+│       ├── cashflow_list.html           # Список операций ДДС
+│       ├── cashflow_form.html           # Форма создания/редактирования
+│       ├── cashflow_confirm_delete.html # Подтверждение удаления
+│       ├── directories.html             # Страница справочников
+│       │
+│       ├── status_list.html             # Список статусов
+│       ├── status_form.html             # Форма статуса
+│       ├── status_confirm_delete.html   # Удаление статуса
+│       │
+│       ├── transactiontype_list.html          # Список типов операций
+│       ├── transactiontype_form.html          # Форма типа операции
+│       ├── transactiontype_confirm_delete.html# Удаление типа
+│       │
+│       ├── category_list.html             # Список категорий
+│       ├── category_form.html             # Форма категории
+│       ├── category_confirm_delete.html   # Удаление категории
+│       │
+│       ├── subcategory_list.html          # Список подкатегорий
+│       ├── subcategory_form.html          # Форма подкатегории
+│       └── subcategory_confirm_delete.html# Удаление подкатегории
+│
+├── static/                       # Статические файлы
 │   └── dds/
 │       ├── css/
-│       │   └── style.css
+│       │   └── style.css         # Основные стили (Bootstrap + кастомные)
 │       ├── js/
-│       │   └── main.js
-│       └── images/
-├── .env                     # Переменные окружения (не в git!)
-├── .env.example             # Пример переменных
-├── .gitignore               # Игнорируемые файлы
-├── requirements.txt         # Зависимости
-├── manage.py                # Утилита управления
-└── README.md                # Документация
+│       │   ├── main.js           # Основные JS функции (утилиты)
+│       │   ├── api.js            # API клиент для DRF
+│       │   └── directories.js    # CRUD для справочников
+│       └── images/               # Изображения
+│
+├── .env                          # Переменные окружения (НЕ в git!)
+├── .env.example                  # Пример переменных окружения
+├── .gitignore                    # Игнорируемые файлы
+├── requirements.txt              # Зависимости Python
+├── manage.py                     # Утилита управления Django
+└── README.md                     # Документация
 ```
 
 ---
